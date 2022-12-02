@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   ocserv:
-    image: aold619/ocserv:ubuntu
+    image: aold619/ocserv:latest
     container_name: ocserv
     # hostname: vpn.example.com
     env_file:
