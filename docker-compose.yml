@@ -3,19 +3,19 @@ services:
   ocserv:
     image: aold619/ocserv:ubuntu
     container_name: ocserv
-    hostname: oc.duckduck.io
+    # hostname: vpn.example.com
     env_file:
       - ./.env
     ports:
       - 443:443
       - 443:443/udp
-    volumes:
-      - ./ocserv:/etc/ocserv
-      - ./letsencrypt:/etc/letsencrypt
+    # volumes:
+    #   - ./ocserv:/etc/ocserv
+    #   - ./letsencrypt:/etc/letsencrypt
     sysctls:
-    - net.ipv4.ip_forward=1
+      - net.ipv4.ip_forward=1
     cap_add:
-    - NET_ADMIN
+      - NET_ADMIN
     security_opt:
-    - no-new-privileges
+      - no-new-privileges
     #restart: on-failure
