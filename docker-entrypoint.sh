@@ -61,16 +61,16 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	else
 		# Create letsencrypt certificate
 		if [ -z "$EMAIL" ]; then
-				EMAIL="foo@example.com"
+      EMAIL="foo@example.com"
 		fi
 		if [ -f /etc/letsencrypt/cloudflare.ini ]; then
-				certbot certonly --dns-cloudflare \
-				--dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
-				--email $EMAIL -d $DOMAIN \
-				--non-interactive --agree-tos
+      certbot certonly --dns-cloudflare \
+      --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
+      --email $EMAIL -d $DOMAIN \
+      --non-interactive --agree-tos
 		else
-				certbot certonly --non-interactive --agree-tos \
-				--standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
+      certbot certonly --non-interactive --agree-tos \
+      --standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
 		fi
 
 		echo "server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem" >> /etc/ocserv/ocserv.conf
