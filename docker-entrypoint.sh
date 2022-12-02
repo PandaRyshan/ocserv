@@ -105,7 +105,7 @@ sysctl -p
 
 # Enable NAT forwarding
 # iptables -t nat -A POSTROUTING -j MASQUERADE
-iptables -t nat -A POSTROUTING -s 192.168.99.0/24 -j SNAT --to-source $SERVER_IP
+iptables -t nat -A POSTROUTING -s 192.168.99.0/24 -j SNAT --to-source $(hostname -I)
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 # Enable TUN device
