@@ -76,7 +76,7 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 		echo "server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem" >> /etc/ocserv/ocserv.conf
 
 		# Start crond
-		echo '15 00 * * * certbot renew --quiet && systemctl restart ocserv' > /var/spool/cron/crontabs/$USER
+		echo '15 00 * * * certbot renew --quiet && systemctl restart ocserv' > /var/spool/cron/crontabs/root
 		service cron restart
 	fi
 	echo 'Certificate is generated.'
