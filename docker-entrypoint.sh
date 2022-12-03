@@ -3,10 +3,10 @@
 # Create init config
 if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	cat > ocserv.conf <<- EOCONF
-  # authentication via linux user
-  # auth = pam
+	# authentication via linux user
+	# auth = pam
 
-  # authentication via passwd file
+	# authentication via passwd file
 	auth = "plain[passwd=/etc/ocserv/ocpasswd]"
 
 	tcp-port = 443
@@ -25,12 +25,12 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	ipv4-network = 192.168.99.0/24
 	ipv4-netmask = 255.255.255.0
 
-  route = default
-  route = 192.168.99.0/255.255.255.0
-  no-route = 192.168.0.0/255.255.0.0
-  no-route = 10.0.0.0/255.0.0.0
-  no-route = 172.16.0.0/255.240.0.0
-  no-route = 127.0.0.0/255.0.0.0
+	route = default
+	route = 192.168.99.0/255.255.255.0
+	no-route = 192.168.0.0/255.255.0.0
+	no-route = 10.0.0.0/255.0.0.0
+	no-route = 172.16.0.0/255.240.0.0
+	no-route = 127.0.0.0/255.0.0.0
 
 	dns = 1.1.1.1
 	dns = 114.114.114.114
