@@ -1,4 +1,4 @@
-## ocserv + certbot in one Dockerfile
+## ocserv + certbot in one image
 
 ---
 
