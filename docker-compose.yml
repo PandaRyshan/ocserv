@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   ocserv:
-    image: aold619/ocserv:latest
+    image: duckduckio/ocserv:latest
     container_name: ocserv
     # hostname: ${DOMAIN}
     env_file:
