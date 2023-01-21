@@ -86,9 +86,9 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 		if [ -z "$EMAIL" ]; then
 			EMAIL="foo@example.com"
 		fi
-		if [ -f /etc/letsencrypt/cloudflare.ini ]; then
+		if [ -f /etc/ocserv/cloudflare.ini ]; then
 			certbot certonly --dns-cloudflare \
-			--dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini --email $EMAIL -d $DOMAIN \
+			--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini --email $EMAIL -d $DOMAIN \
 			--non-interactive --agree-tos
 		else
 			certbot certonly --non-interactive --agree-tos \
