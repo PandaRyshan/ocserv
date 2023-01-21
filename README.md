@@ -15,6 +15,8 @@ Usage:
   - clone this repo
   - replace your domain and email in `.env`
   - (optional) mount your local dir to keep your certificates and config files
+    * if you want get certs via cloudflare api token, please mount config file into config/ folder
+    * if you want to get certs via http, please make sure 80 port is open
   - `docker-compose up -d` or `docker compose up -d`
 
 ---

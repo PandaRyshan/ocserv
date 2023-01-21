@@ -3,15 +3,15 @@ services:
   ocserv:
     image: aold619/ocserv:latest
     container_name: ocserv
-    # hostname: vpn.example.com
+    # hostname: ${DOMAIN}
     env_file:
       - ./.env
     ports:
       - 443:443
       - 443:443/udp
     # volumes:
-    #   - ./ocserv:/etc/ocserv
-    #   - ./letsencrypt:/etc/letsencrypt
+    #   - $HOME/ocserv/config:/etc/ocserv
+    #   - $HOME/ocserv/config/letsencrypt:/etc/letsencrypt
     sysctls:
       - net.ipv4.ip_forward=1
     cap_add:
