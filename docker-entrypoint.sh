@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Setup Timezone
+if [ -z "$TZ" ]; then
+	timedatectl set-timezone $TZ
+fi
+
 # Create init config
 if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	cat > ocserv.conf <<- EOCONF
