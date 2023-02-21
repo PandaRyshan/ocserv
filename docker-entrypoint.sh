@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Setup Timezone
-if [ -z "$TZ" ]; then
-	timedatectl set-timezone $TZ
+if [ -v TZ ]; then
+	echo $TZ > /etc/timezone
+	export TZ
 fi
 
 # Create init config
@@ -31,32 +32,66 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	ipv4-netmask = 255.255.255.0
 
 	route = default
-	route = 192.168.99.0/255.255.255.0
-	no-route = 192.168.0.0/255.255.0.0
-	no-route = 10.0.0.0/255.0.0.0
-	no-route = 172.16.0.0/255.240.0.0
-	no-route = 127.0.0.0/255.0.0.0
+	route = 192.168.99.0/24
+	no-route = 10.0.0.0/8
+	no-route = 100.64.0.0/10
+	no-route = 169.254.0.0/16
+	no-route = 192.0.0.0/24
+	no-route = 192.168.0.0/16
+	no-route = 224.0.0.0/24
+	no-route = 240.0.0.0/4
+	no-route = 172.16.0.0/12
+	no-route = 127.0.0.0/8
+	#no-route = 255.255.255.255/32
+
+	# tunnel all dns queries via VPN server
+	# tunnel-all-dns = true
 
 	dns = 1.1.1.1
-	dns = 114.114.114.114
+	dns = 223.5.5.5
 	dns = 8.8.8.8
-	dns = 208.67.222.222
+	dns = 208.67.220.220
 
 	cisco-client-compat = true
 	ping-leases = false
 	dtls-legacy = true
 	EOCONF
 
-	# Create certificate offline
-	if [ -z "$DOMAIN" ]; then
+fi
+
+# Create certificate
+if [ ! -f /etc/ocserv/server.cert ]; then
+
+	if [ -v EMAIL ] && [ -v DOMAIN ]; then
+
+		# Create letsencrypt certificate
+		if [ -f /etc/ocserv/cloudflare.ini ]; then
+			certbot certonly --dns-cloudflare \
+			--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini --email $EMAIL -d $DOMAIN \
+			--non-interactive --agree-tos
+		else
+			certbot certonly --non-interactive --agree-tos \
+			--standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
+		fi
+		# Start crond
+		echo '15 00 * * * certbot renew --quiet && systemctl restart ocserv' > /var/spool/cron/crontabs/root
+		service cron restart
+
+	else
+
+		# Create self signed certificate
 		CA_CN="vpn.example.com"
 		CA_ORG="CA_Organization"
-		CA_DAYS=9999
+		CA_DAYS=999
 		SRV_CN="vpn.example.com"
 		SRV_ORG="My_Organization"
-		SRV_DAYS=9999
+		SRV_DAYS=999
 
-		# No certification found, generate one
+		if [ -v DOMAIN ]; then
+			CA_CN="$DOMAIN"
+			SRV_CN="$DOMAIN"
+		fi
+
 		certtool --generate-privkey --outfile ca-key.pem
 		cat > ca.tmpl <<-EOCA
 		cn = "$CA_CN"
@@ -81,43 +116,30 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 		certtool --generate-certificate --load-privkey server-key.pem --load-ca-certificate ca.pem --load-ca-privkey ca-key.pem --template server.tmpl --outfile server-cert.pem
 		echo "server-cert = /etc/ocserv/server-cert.pem" >> ocserv.conf
 		echo "server-key = /etc/ocserv/server-key.pem" >> ocserv.conf
-	else
-		# Create letsencrypt certificate
-		if [ -z "$EMAIL" ]; then
-			EMAIL="foo@example.com"
-		fi
-		if [ -f /etc/ocserv/cloudflare.ini ]; then
-			certbot certonly --dns-cloudflare \
-			--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini --email $EMAIL -d $DOMAIN \
-			--non-interactive --agree-tos
-		else
-			certbot certonly --non-interactive --agree-tos \
-			--standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
-		fi
-
-		echo "server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem" >> /etc/ocserv/ocserv.conf
-		echo "server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem" >> /etc/ocserv/ocserv.conf
-
-		# Start crond
-		echo '15 00 * * * certbot renew --quiet && systemctl restart ocserv' > /var/spool/cron/crontabs/root
-		service cron restart
 	fi
-	echo 'Certificate is generated.'
+
+	echo "server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem" >> /etc/ocserv/ocserv.conf
+	echo "server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem" >> /etc/ocserv/ocserv.conf
+
 fi
 
-# Create specific user
-if [ ! -z "$USERNAME" ] && [ ! -z "$USERPASS" ]; then
-	echo "$USERPASS" | echo "$USERPASS" | ocpasswd "$USERNAME"
-fi
-
-# Create init test user
+# Create init user
 if [ ! -f /etc/ocserv/ocpasswd ]; then
-	openssl rand -base64 14 > /home/$USERNAME/pass.txt
-	cat /home/$USERNAME/pass.txt | cat /home/$USERNAME/pass.txt | ocpasswd "test"
-	echo '----------------- Test User Generated ------------------'
-	echo 'User: test'
-	echo "Pass: $(cat /home/$USERNAME/pass.txt)"
+
+	if [ ! -v USERNAME ] && [ ! -v USERPASS ]; then
+		# Create specific user
+		USERNAME='test'
+		USERPASS=$(openssl rand -base64 14)
+	else
+		echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
+	fi
+
+	echo $USERPASS > $HOME/initial_pass.txt
+	echo '----------------- User Generated ------------------'
+	echo "User: $USERNAME"
+	echo "Pass: $USERPASS"
 	echo '--------------------------------------------------------'
+
 fi
 
 # Open ipv4 ip forward
