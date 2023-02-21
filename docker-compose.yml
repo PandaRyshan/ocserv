@@ -18,4 +18,4 @@ services:
       - NET_ADMIN
     security_opt:
       - no-new-privileges
-    #restart: on-failure
+    #restart: unless-stopped
