@@ -22,7 +22,7 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	run-as-group = daemon
 	socket-file = /var/run/ocserv-socket
 
-	max-clients = 50
+	max-clients = 100
 	max-same-clients = 0
 	try-mtu-discovery = true
 
@@ -42,19 +42,26 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	no-route = 240.0.0.0/4
 	no-route = 172.16.0.0/12
 	no-route = 127.0.0.0/8
-	#no-route = 255.255.255.255/32
+	no-route = 255.255.255.255/32
 
-	# tunnel all dns queries via VPN server
-	# tunnel-all-dns = true
+	# tunnel all DNS queries via the VPN
+	tunnel-all-dns = true
 
 	dns = 1.1.1.1
 	dns = 223.5.5.5
 	dns = 8.8.8.8
 	dns = 208.67.220.220
 
+	# config file must as same as username or groupname
+	# config-per-user = /etc/ocserv/config-per-user/
+	# config-per-group = /etc/ocserv/config-per-group/
+
 	cisco-client-compat = true
 	ping-leases = false
 	dtls-legacy = true
+
+	use-occtl = true
+	log-level = 1
 	EOCONF
 
 fi
