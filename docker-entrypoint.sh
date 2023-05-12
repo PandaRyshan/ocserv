@@ -48,13 +48,15 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	tunnel-all-dns = true
 
 	dns = 1.1.1.1
-	dns = 223.5.5.5
 	dns = 8.8.8.8
-	dns = 208.67.220.220
+	# dns = 223.5.5.5
 
 	# config file must as same as username or groupname
 	# config-per-user = /etc/ocserv/config-per-user/
 	# config-per-group = /etc/ocserv/config-per-group/
+
+	# let ocserv to obtain information on the incoming session from loadbalancer
+	keepalive = 300
 
 	cisco-client-compat = true
 	ping-leases = false
@@ -80,8 +82,19 @@ if [ ! -f /etc/ocserv/server.cert ]; then
 			certbot certonly --non-interactive --agree-tos \
 			--standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
 		fi
-		# Start crond
-		echo '15 00 * * * certbot renew --quiet && systemctl restart ocserv' > /var/spool/cron/crontabs/root
+
+		cron_file="/var/spool/cron/crontabs/root"
+		cron_config='15 00 * * * certbot renew --quiet && systemctl restart ocserv'
+		if ! grep -Fxq "$cron_config" $cron_file; then
+			echo "$cron_config" >> $cron_file
+		fi
+		ocserv_config_file="/etc/ocserv/ocserv.conf"
+		cert_config="server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem"
+		key_config="server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem"
+		if ! grep -Fxq "$cert_config" $ocserv_config_file; then
+			echo "$cert_config" >> $ocserv_config_file
+			echo "$key_config" >> $ocserv_config_file
+		fi
 		service cron restart
 
 	else
@@ -123,10 +136,8 @@ if [ ! -f /etc/ocserv/server.cert ]; then
 		certtool --generate-certificate --load-privkey server-key.pem --load-ca-certificate ca.pem --load-ca-privkey ca-key.pem --template server.tmpl --outfile server-cert.pem
 		echo "server-cert = /etc/ocserv/server-cert.pem" >> ocserv.conf
 		echo "server-key = /etc/ocserv/server-key.pem" >> ocserv.conf
-	fi
 
-	echo "server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem" >> /etc/ocserv/ocserv.conf
-	echo "server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem" >> /etc/ocserv/ocserv.conf
+	fi
 
 fi
 
