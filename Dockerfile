@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:rolling
 LABEL maintainer="Hu Xiaohong <xiaohong@duckduck.io>"
 
 ENV VERSION 1.1.6
