@@ -68,8 +68,8 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 
 fi
 
-# Create certificate
-if [ ! -f /etc/ocserv/server.cert ]; then
+# Create certs if no local or letsencrypt certs
+if [ ! -f /etc/ocserv/server.cert ] && [ ! -f /etc/ocserv/fullchain.pem ]; then
 
 	if [ -z DOMAIN ]; then
 
