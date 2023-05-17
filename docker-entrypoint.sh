@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Wait for other container
+/wait
+
 # Create init config
 if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	cat > ocserv.conf <<- EOCONF
