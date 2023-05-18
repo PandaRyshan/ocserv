@@ -1,26 +1,27 @@
-## ocserv + certbot in one image
+# ocserv + certbot 2 in 1 image
 
 ---
 
-Combines [ocserv](https://ocserv.gitlab.io/www/recipes.html) and [certbot](https://eff-certbot.readthedocs.io/en/stable/using.html#) to use secure connections via letsencrypt certificates, with the certbot-dns-cloudflare plugin installed by default.
+## Description
 
-[ENV file](https://github.com/PandaRyshan/ocserv/blob/main/.env) is used to request a Letsencrypt certificate. If no ENV is provided, the ocserv service will be started with a locally generated certificate.
+This repo combines [ocserv](https://ocserv.gitlab.io/www/recipes.html) VPN server and [certbot](https://eff-certbot.readthedocs.io/en/stable/using.html#) in one image, allowing users to use secure VPN service and request or renew cert automatically.  The certbot-dns-cloudflare plugin is installed by default.
 
-You can also mount your own configuration, certs or passwd to use them out of the box.
+This image provided a default config in `/etc/ocserv/ocserv.conf`. If you don't mount a conf file, it will generate a new one. And [ENV file](https://github.com/PandaRyshan/ocserv/blob/main/.env) is used to request a Letsencrypt certificate and create a default username. If no ENV is provided, the ocserv service will be started with a locally generated certificate.
 
-Currently the latest version is 1.1.7.
+The latest version is 1.1.7, and dockerhub page is [here](https://hub.docker.com/r/duckduckio/ocserv).
 
 ---
 
 Usage:
 
   - clone this repo
-  - replace your domain and email in `.env`
+  - replace content in `.env` file with your information, and check the options in `docker-compose.yml`
+    > email address is for certs expiration remind only if certs renew failed
   - (optional) mount your local dir to keep your certificates and config files
     * if you want get certs via cloudflare api token, please mount config file into config/ folder
     * if you want to get certs via http, please make sure 80 port is open
-  - `docker-compose up -d` or `docker compose up -d`
-  - add `listen-proxy-proto = true` in your `ocserv.conf` if you want to put ocserv in the back of proxy, like haproxy. 
+  - run `docker-compose up -d`
+  - keep in mind add `listen-proxy-proto = true` in your `ocserv.conf` if you want to put ocserv in the back of proxy, like haproxy. 
 
 ---
 
