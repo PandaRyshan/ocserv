@@ -58,12 +58,14 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	# let ocserv to obtain information on the incoming session from loadbalancer
 	keepalive = 300
 
-	# uncomment if you use haproxy
+	# uncomment below if you are using haproxy
 	# listen-proxy-proto = true
 
-	cisco-client-compat = true
 	ping-leases = false
-	dtls-legacy = true
+	match-tls-dtls-ciphers = true
+	# if you want to support older version cisco clients, uncomment the following line
+	# dtls-legacy = true
+	# cisco-client-compat = true
 
 	use-occtl = true
 	log-level = 1
