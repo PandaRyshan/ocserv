@@ -8,6 +8,8 @@ Combines [ocserv](https://ocserv.gitlab.io/www/recipes.html) and [certbot](https
 
 You can also mount your own configuration, certs or passwd to use them out of the box.
 
+Currently the latest version is 1.1.7.
+
 ---
 
 Usage:
