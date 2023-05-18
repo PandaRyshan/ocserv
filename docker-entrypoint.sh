@@ -156,9 +156,8 @@ if [ ! -f /etc/ocserv/ocpasswd ]; then
 		# Create specific user
 		USERNAME='test'
 		USERPASS=$(openssl rand -base64 14)
-	else
-		echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
 	fi
+	echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
 
 	echo $USERPASS > $HOME/initial_pass.txt
 	echo '----------------- User Generated ------------------'
