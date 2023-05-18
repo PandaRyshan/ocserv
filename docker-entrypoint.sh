@@ -62,10 +62,13 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 	# listen-proxy-proto = true
 
 	ping-leases = false
-	match-tls-dtls-ciphers = true
+
 	# if you want to support older version cisco clients, uncomment the following line
 	# dtls-legacy = true
 	# cisco-client-compat = true
+
+	match-tls-dtls-ciphers = true
+	dtls-legacy = false
 
 	use-occtl = true
 	log-level = 1
