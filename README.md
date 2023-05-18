@@ -15,8 +15,7 @@ The latest version is 1.1.7, and dockerhub page is [here](https://hub.docker.com
 Usage:
 
   - clone this repo
-  - replace content in `.env` file with your information, and check the options in `docker-compose.yml`
-    > email address is for certs expiration remind only if certs renew failed
+  - replace content in `.env` file with your information, and check the options in `docker-compose.yml`. email address is optional and only for certs expiration remind if certs renew failed
   - (optional) mount your local dir to keep your certificates and config files
     * if you want get certs via cloudflare api token, please mount config file into config/ folder
     * if you want to get certs via http, please make sure 80 port is open
