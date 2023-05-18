@@ -79,7 +79,7 @@ fi
 # Create certs if no local or letsencrypt certs
 if [ ! -f /etc/ocserv/server.cert ] && [ ! -f /etc/letsencrypt/live/$DOMAIN/fullchain.pem ]; then
 
-	if [ -z DOMAIN ]; then
+	if [ -z $DOMAIN ]; then
 
 		# Create self signed certificate
 		CN="vpn.example.com"
@@ -152,7 +152,7 @@ fi
 # Create init user for PAM authentication
 if [ ! -f /etc/ocserv/ocpasswd ]; then
 
-	if [ -z USERNAME ] && [ -z USERPASS ]; then
+	if [ -z $USERNAME ] && [ -z $USERPASS ]; then
 		# Create specific user
 		USERNAME='test'
 		USERPASS=$(openssl rand -base64 14)
