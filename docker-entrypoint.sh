@@ -30,6 +30,7 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 
 	ipv4-network = 192.168.100.0/24
 	ipv4-netmask = 255.255.255.0
+	ping-leases = false
 
 	route = default
 	route = 192.168.0.0/24
@@ -60,8 +61,6 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 
 	# uncomment below if you are using haproxy
 	# listen-proxy-proto = true
-
-	ping-leases = false
 
 	# if you want to support older version cisco clients, uncomment the following line
 	# dtls-legacy = true
