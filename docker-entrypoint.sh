@@ -4,7 +4,7 @@
 /wait
 
 # Create init config
-if [ ! -f /etc/ocserv/ocserv.conf ]; then
+if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 	cat > ocserv.conf <<- EOCONF
 	# authentication via linux user
 	# auth = pam
@@ -76,7 +76,7 @@ if [ ! -f /etc/ocserv/ocserv.conf ]; then
 fi
 
 # Create certs if no local or letsencrypt certs
-if [ ! -f /etc/ocserv/server.cert ] && [ ! -f /etc/letsencrypt/live/$DOMAIN/fullchain.pem ]; then
+if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
 
 	if [ -z $DOMAIN ]; then
 
@@ -116,12 +116,12 @@ if [ ! -f /etc/ocserv/server.cert ] && [ ! -f /etc/letsencrypt/live/$DOMAIN/full
 
 	else
 
-		if [ -z EMAIL ]; then
+		if [[ -z $EMAIL ]]; then
 			EMAIL="foo@example.com"
 		fi
 
 		# Create letsencrypt certificate
-		if [ -f /etc/ocserv/cloudflare.ini ]; then
+		if [ -f "/etc/ocserv/cloudflare.ini" ]; then
 			certbot certonly --dns-cloudflare \
 			--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini --email $EMAIL -d $DOMAIN \
 			--non-interactive --agree-tos
@@ -149,14 +149,15 @@ if [ ! -f /etc/ocserv/server.cert ] && [ ! -f /etc/letsencrypt/live/$DOMAIN/full
 fi
 
 # Create init user for PAM authentication
-if [ ! -f /etc/ocserv/ocpasswd ]; then
+if [ ! -f "/etc/ocserv/ocpasswd" ]; then
 
-	if [ -z $USERNAME ] && [ -z $USERPASS ]; then
+	if [[ -z $USERNAME ]] && [[ -z $USERPASS ]]; then
 		# Create specific user
 		USERNAME='test'
 		USERPASS=$(openssl rand -base64 14)
+	else
+		echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
 	fi
-	echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
 
 	echo $USERPASS > $HOME/initial_pass.txt
 	echo '----------------- User Generated ------------------'
