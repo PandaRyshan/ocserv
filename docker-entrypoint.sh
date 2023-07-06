@@ -3,10 +3,6 @@
 # Wait for other container
 /wait
 
-echo "--------------------------DEBUG-----------------------------"
-echo "DOMAIN: ${DOMAIN}, EMAIL: ${EMAIL}"
-echo "USERNAME: ${USERNAME}, PASSWORD: ${PASSWORD}"
-echo "--------------------------DEBUG-----------------------------"
 # Create init config
 if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 	cat > ocserv.conf <<- EOCONF
