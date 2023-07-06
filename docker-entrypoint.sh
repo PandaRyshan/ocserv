@@ -151,18 +151,18 @@ fi
 # Create init user for PAM authentication
 if [ ! -f "/etc/ocserv/ocpasswd" ]; then
 
-	if [[ -z $USERNAME ]] && [[ -z $USERPASS ]]; then
+	if [[ -z $USERNAME ]] && [[ -z $PASSWORD ]]; then
 		# Create specific user
 		USERNAME='test'
-		USERPASS=$(openssl rand -base64 14)
-	else
-		echo $USERPASS | echo $USERPASS | ocpasswd $USERNAME
+		PASSWORD=$(openssl rand -base64 14)
 	fi
 
-	echo $USERPASS > $HOME/initial_pass.txt
+	echo $PASSWORD | echo $PASSWORD | ocpasswd $USERNAME
+
+	echo $PASSWORD > $HOME/initial_pass.txt
 	echo '----------------- User Generated ------------------'
 	echo "User: $USERNAME"
-	echo "Pass: $USERPASS"
+	echo "Pass: $PASSWORD"
 	echo '---------------------------------------------------'
 
 fi
