@@ -5,9 +5,6 @@ ENV URL="https://www.infradead.org/ocserv/download/"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-COPY docker-entrypoint.sh /entrypoint.sh
-COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
-
 RUN set -x \
   && apt-get update && apt-get install -y wget make gcc \
   && apt-get install --no-install-recommends -y \
@@ -21,18 +18,21 @@ RUN set -x \
     grep -oE 'ocserv-([0-9]{1,}\.)+[0-9]{1,}\.tar\.xz' | \
     sort -V | tail -n1 | \
     xargs -I {} wget -q "${URL}{}" -O ocserv.tar.xz \
-  && tar xf ocserv.tar.xz && cd ocserv-* \
+  && tar -xf ocserv.tar.xz && cd ocserv-* \
   && ./configure \
   && make && make install && make clean \
   && cd .. && rm -rf ocserv-* ocserv.tar.xz \
   && apt-get -y remove --auto-remove --purge wget make gcc \
   && rm -rf /var/lib/apt/lists/* \
-  && rm -rf /etc/ocserv/ocserv.conf \
-  && chmod +x /entrypoint.sh
+  && rm -rf /etc/ocserv/ocserv.conf
 
 WORKDIR /etc/ocserv
+
+COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
+COPY docker-entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 443
 CMD ["ocserv", "-c", "/etc/ocserv/ocserv.conf", "-f"]
+
