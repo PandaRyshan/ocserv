@@ -24,7 +24,7 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 	try-mtu-discovery = true
 
 	# disable ssl3 tls1.0 tls1.1
-	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1"
+	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2"
 
 	device = vpns
 
@@ -61,6 +61,15 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 
 	# uncomment below if you are using haproxy
 	# listen-proxy-proto = true
+
+	# Uncomment this to enable compression negotiation (LZS, LZ4).
+	compression = true
+
+	# Set the minimum size under which a packet will not be compressed.
+	# That is to allow low-latency for VoIP packets. The default size
+	# is 256 bytes. Modify it if the clients typically use compression
+	# as well of VoIP with codecs that exceed the default value.
+	no-compress-limit = 256
 
 	# if you want to support older version cisco clients, uncomment the following line
 	# dtls-legacy = true
