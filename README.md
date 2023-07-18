@@ -29,3 +29,9 @@ References:
   - [Openconnect VPN Manual - Official](https://ocserv.gitlab.io/www/manual.html)
   - [Ocserv Advanced](https://www.linuxbabe.com/linux-server/ocserv-openconnect-vpn-advanced)
   - [Block Visitors by Country Using Firewall](https://www.ip2location.com/free/visitor-blocker)
+
+---
+
+TODO:
+
+* [ ] cannot connect with Cisco secure client on macOS
