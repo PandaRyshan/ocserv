@@ -33,7 +33,6 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 	ping-leases = false
 
 	route = default
-	route = 192.168.0.0/24
 	no-route = 10.0.0.0/8
 	no-route = 100.64.0.0/10
 	no-route = 169.254.0.0/16
