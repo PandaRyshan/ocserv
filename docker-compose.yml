@@ -6,11 +6,12 @@ services:
     env_file:
       - ./.env
     ports:
+    #  - 80:80 # for certbot obtain certs
       - 443:443
       - 443:443/udp
     # volumes:
     #   - ./config:/etc/ocserv
-    #   - ./config/letsencrypt:/etc/letsencrypt
+    #   - ./letsencrypt:/etc/letsencrypt
     sysctls:
       - net.ipv4.ip_forward=1
     cap_add:

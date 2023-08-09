@@ -21,7 +21,6 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 
 	max-clients = 100
 	max-same-clients = 0
-	try-mtu-discovery = true
 
 	# disable ssl3 tls1.0 tls1.1
 	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2"
@@ -44,19 +43,23 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 	no-route = 127.0.0.0/8
 	no-route = 255.255.255.255/32
 
-	# tunnel all DNS queries via the VPN
 	tunnel-all-dns = true
 
 	dns = 1.1.1.1
 	dns = 8.8.8.8
 
-	# config file must as same as username or groupname
+	# custom config file must as same as username or groupname
 	config-per-user = /etc/ocserv/config-per-user/
 	config-per-group = /etc/ocserv/config-per-group/
 	predictable-ips = true
 
-	# let ocserv to obtain information on the incoming session from loadbalancer
-	keepalive = 300
+	# dead peer detection and keepalive in seconds
+	keepalive = 290
+	dpd = 90
+	mobile-dpd = 1800
+	switch-to-tcp-timeout = 25
+
+	try-mtu-discovery = true
 
 	# uncomment below if you are using haproxy
 	# listen-proxy-proto = true
