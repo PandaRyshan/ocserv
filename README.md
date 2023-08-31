@@ -14,13 +14,48 @@ The latest version is 1.1.7, and dockerhub page is [here](https://hub.docker.com
 
 Usage:
 
-  - clone this repo
-  - replace content in `.env` file with your information, and check the options in `docker-compose.yml`. email address is optional and only for certs expiration remind if certs renew failed
-  - (optional) mount your local dir to keep your certificates and config files
+Server:
+
+  * clone this repo
+  * replace content in `.env` file with your information, and check the options in `docker-compose.yml`. email address is optional and only for certs expiration remind if certs renew failed
+  * (optional) mount your local dir to keep your certificates and config files
     * if you want get certs via cloudflare api token, please mount config file into config/ folder
     * if you want to get certs via http, please make sure 80 port is open
-  - run `docker-compose up -d`
-  - keep in mind add `listen-proxy-proto = true` in your `ocserv.conf` if you want to put ocserv in the back of proxy, like haproxy. 
+  * run `docker-compose up -d`
+  * keep in mind add `listen-proxy-proto = true` in your `ocserv.conf` if you want to put ocserv in the back of proxy, like haproxy. 
+  
+Client:
+
+You could use a Cisco Anyconnect client or Cisco secure client to connect the server, or use openconnect client by following steps.
+
+  * prepare connect and disconnect scripts and save them to somewhere in your User space:
+
+    **anyconnect.sh**
+
+    ```shell
+    #!/bin/bash
+
+    sudo openconnect -b -q --protocol=anyconnect <your-domain> << delimiter
+    <your-username>
+    <your-password>
+    delimiter
+    ```
+
+    **kill-anyconnect.sh**
+
+    ```shell
+    #!/bin/bash
+
+    sudo pkill openconnect
+    ```
+
+  * create a soft link of script as a system command:
+
+    ```shell
+    sudo ln -s <your-srcipt.sh> /usr/local/bin/<command-you-want>
+    ```
+
+See more usage: `openconnect --help`
 
 ---
 
@@ -32,6 +67,7 @@ References:
 
 ---
 
-TODO:
+Known issues:
 
 * [ ] cannot connect with Cisco secure client on macOS
+
