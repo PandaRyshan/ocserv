@@ -3,15 +3,24 @@ services:
   ocserv:
     image: duckduckio/ocserv:latest
     container_name: ocserv
-    env_file:
-      - ./.env
+    environment:
+      - TZ=Asia/Hong_Kong
+      - DOMAIN=
+      - EMAIL=            # OPTIONAL, only for cert expiration remind
+      - USERNAME=         # OPTIONAL, it will be generated auto
+      - PASSWORD=
+      - WAIT_HOSTS=       # OPTIONAL, run ocserv after following items ready
+      - WAIT_PATHS=
+      - WAIT_FILES=
+      - WAIT_TIMEOUT=
     ports:
-    #  - 80:80 # for certbot obtain certs
+      - 80:80 # for certbot obtain cert via http, no need when you use dns
       - 443:443
       - 443:443/udp
     # volumes:
     #   - ./config:/etc/ocserv
     #   - ./letsencrypt:/etc/letsencrypt
+    #   - <your-cloudflare-dns-conf>:/etc/ocserv/cloudflare.ini
     sysctls:
       - net.ipv4.ip_forward=1
     cap_add:
@@ -19,3 +28,4 @@ services:
     security_opt:
       - no-new-privileges
     restart: unless-stopped
+

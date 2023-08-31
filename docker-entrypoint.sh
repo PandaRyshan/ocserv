@@ -128,7 +128,7 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 	else
 
 		if [[ -z $EMAIL ]]; then
-			EMAIL="foo@example.com"
+			EMAIL="foo@pandas.run"
 		fi
 
 		# Create letsencrypt certificate
