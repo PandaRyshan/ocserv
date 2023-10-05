@@ -72,5 +72,5 @@ References:
 
 Known issues:
 
-* [ ] cannot connect with Cisco secure client on macOS
+* [ ] [cannot connect with Cisco secure client on macOS](https://github.com/PandaRyshan/ocserv/issues/4)
 
