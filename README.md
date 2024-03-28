@@ -8,7 +8,7 @@ This repo combines [ocserv](https://ocserv.gitlab.io/www/recipes.html) VPN serve
 
 This image provided a default config in `/etc/ocserv/ocserv.conf`. If you don't mount a conf file, it will generate a new one. And [ENV file](https://github.com/PandaRyshan/ocserv/blob/main/.env) is used to request a Letsencrypt certificate and create a default username. If no ENV is provided, the ocserv service will be started with a locally generated certificate.
 
-The latest version is 1.2.2, and dockerhub page is [here](https://hub.docker.com/r/duckduckio/ocserv).
+The latest version is 1.2.4, and dockerhub page is [here](https://ocserv.gitlab.io/www/download.html).
 
 ---
 
