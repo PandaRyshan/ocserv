@@ -1,5 +1,5 @@
 FROM ubuntu:rolling
-LABEL maintainer="Hu Xiaohong <xiaohong@duckduck.io>"
+LABEL maintainer="Hu Xiaohong <xiaohong@pandas.run>"
 
 ENV URL="https://www.infradead.org/ocserv/download/"
 

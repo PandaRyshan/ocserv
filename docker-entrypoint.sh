@@ -29,6 +29,8 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 
 	ipv4-network = 192.168.100.0/24
 	ipv4-netmask = 255.255.255.0
+	ipv6-network = fda9:4efe:7e3b:03ea::/48
+	ipv6-subnet-prefix = 64
 	ping-leases = false
 
 	route = default

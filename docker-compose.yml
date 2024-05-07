@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   ocserv:
-    image: duckduckio/ocserv:latest
+    image: /ocserv:latest
     container_name: ocserv
     environment:
       - TZ=Asia/Hong_Kong
@@ -23,9 +22,16 @@ services:
     #   - <your-cloudflare-dns-conf>:/etc/ocserv/cloudflare.ini
     sysctls:
       - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - NET_ADMIN
     security_opt:
       - no-new-privileges
     restart: unless-stopped
 
+networks:
+  ipv6:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: fda9:4efe:7e3b:03ea::/48
