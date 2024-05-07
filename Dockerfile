@@ -14,6 +14,7 @@ RUN set -x \
     libnl-3-dev libtalloc-dev libhttp-parser-dev \
     libradcli-dev libpam0g-dev libkrb5-dev \
     certbot python3-certbot-dns-cloudflare cron iptables \
+    ipcalc-ng \
   && wget -qO- "${URL}" | \
     grep -oE 'ocserv-([0-9]{1,}\.)+[0-9]{1,}\.tar\.xz' | \
     sort -V | tail -n1 | \
