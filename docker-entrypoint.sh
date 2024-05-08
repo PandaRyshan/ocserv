@@ -35,6 +35,8 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	ipv6-subnet-prefix = 64
 	ping-leases = false
 
+	route = 172.20.0.0/24
+	route = fda9:4efe:7e3b:03ea::/48
 	route = default
 	no-route = 10.0.0.0/8
 	no-route = 100.64.0.0/10
@@ -145,14 +147,13 @@ if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAI
 			if [[ -z $EMAIL ]]; then
 				certbot certonly --dns-cloudflare --non-interactive --agree-tos \
 				--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini \
-				--register-unsafely-without-email \
-				
+				-d $DOMAIN \
+				--register-unsafely-without-email
 			else
 				certbot certonly --dns-cloudflare --non-interactive --agree-tos \
 				--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini \
 				-d $DOMAIN \
-				--email $EMAIL \
-				--non-interactive --agree-tos
+				--email $EMAIL
 			fi
 		else
 			if [[ -z $EMAIL ]]; then
