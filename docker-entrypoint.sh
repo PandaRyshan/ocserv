@@ -91,13 +91,18 @@ fi
 # Create certs if no local or letsencrypt certs
 if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
 
+	IPV4=$(timeout 3 curl -s https://ipinfo.io/ip || echo "")
+	IPV6=$(timeout 3 curl -s https://6.ipinfo.io/ip || echo "")
 	if [ -z $DOMAIN ]; then
 
 		# Create self signed certificate
 		CN="vpn.example.com"
 		ORG="Organization"
 		DAYS=3650
-		IP=$(curl -s ipinfo.io/ip)
+		if [ -z "$IPV4" ] && [ -z "$IPV6" ]; then
+			echo "Failed to get public IP address"
+			exit 1
+		fi
 
 		certtool --generate-privkey --outfile ca-key.pem
 		cat > ca.tmpl <<-EOCA
@@ -121,7 +126,7 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 		encryption_key
 		tls_www_server
 		# dns_name = "<your-hostname>"
-		ip_address = "$IP"
+		ip_address = "${IPV4:-$IPV6}"
 		EOSRV
 		certtool --generate-certificate --load-privkey server-key.pem --load-ca-certificate ca.pem --load-ca-privkey ca-key.pem --template server.tmpl --outfile server-cert.pem
 		echo "server-cert = /etc/ocserv/server-cert.pem" >> ocserv.conf
@@ -129,18 +134,28 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 
 	else
 
-		if [[ -z $EMAIL ]]; then
-			EMAIL="foo@pandas.run"
-		fi
-
 		# Create letsencrypt certificate
 		if [ -f "/etc/ocserv/cloudflare.ini" ]; then
-			certbot certonly --dns-cloudflare \
-			--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini --email $EMAIL -d $DOMAIN \
-			--non-interactive --agree-tos
+			if [[ -z $EMAIL ]]; then
+				certbot certonly --dns-cloudflare --non-interactive --agree-tos \
+				--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini \
+				--register-unsafely-without-email \
+				
+			else
+				certbot certonly --dns-cloudflare --non-interactive --agree-tos \
+				--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini \
+				-d $DOMAIN \
+				--email $EMAIL \
+				--non-interactive --agree-tos
 		else
-			certbot certonly --non-interactive --agree-tos \
-			--standalone --preferred-challenges http --agree-tos --email $EMAIL -d $DOMAIN
+			if [[ -z $EMAIL ]]; then
+				certbot certonly --standalone --non-interactive --agree-tos \
+				-d $DOMAIN \
+				--register-unsafely-without-email \
+			else
+				certbot certonly --standalone --non-interactive --agree-tos \
+				-d $DOMAIN \
+				--email $EMAIL \
 		fi
 
 		cron_file="/var/spool/cron/crontabs/root"
@@ -182,6 +197,7 @@ fi
 
 # Open ipv4 ip forward
 sysctl -w net.ipv4.ip_forward=1
+sysctl -w net.ipv6.conf.all.forwarding=1
 
 # Enable NAT forwarding
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
