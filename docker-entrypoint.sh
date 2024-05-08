@@ -50,7 +50,11 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	tunnel-all-dns = true
 
 	dns = 1.1.1.1
+	dns = 2606:4700:4700::1111
+	dns = 2606:4700:4700::1001
 	dns = 8.8.8.8
+	dns = 2001:4860:4860::8888
+	dns = 2001:4860:4860::8844
 
 	# custom config file must as same as username or groupname
 	config-per-user = /etc/ocserv/config-per-user/
