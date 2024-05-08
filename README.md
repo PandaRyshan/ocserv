@@ -28,7 +28,7 @@ The latest version is 1.3.0, and dockerhub page is [here](https://ocserv.gitlab.
 * generate new user
 
    ```shell
-   docker exec <your-ocserv-container-name> 
+   docker exec <your-ocserv-container-name> bash -c "echo <password> | echo <password> | ocpasswd <username>"
    ```
   
 ### Client

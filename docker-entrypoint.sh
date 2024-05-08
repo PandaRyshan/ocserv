@@ -207,6 +207,7 @@ sysctl -w net.ipv6.conf.all.forwarding=1
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
 # iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
 iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j MASQUERADE
+ip6tables -t nat -A POSTROUTING -s fda9:4efe:7e3b:03ea::/48 -j MASQUERADE
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 # Enable TUN device

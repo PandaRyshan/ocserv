@@ -10,6 +10,8 @@ services:
       # - WAIT_TIMEOUT=           # OPTIONAL, default 30s, wait for file / host / container to be ready
       # - WAIT_HOSTS=             # OPTIONAL, comma separated list of hostnames to wait for
       # - WAIT_PATHS=             # OPTIONAL, comma separated list of paths to wait for
+    networks:
+      - ipv6
     ports:
       - 80:80 # for certbot obtain cert via http, no need when you use dns
       - 443:443
@@ -31,4 +33,4 @@ networks:
     enable_ipv6: true
     ipam:
       config:
-        - subnet: fda9:4efe:7e3b:03ea::/48
+        - subnet: fda9:4efe:7e3b::/48
