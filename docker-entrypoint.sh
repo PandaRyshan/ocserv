@@ -147,15 +147,17 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 				-d $DOMAIN \
 				--email $EMAIL \
 				--non-interactive --agree-tos
+			fi
 		else
 			if [[ -z $EMAIL ]]; then
 				certbot certonly --standalone --non-interactive --agree-tos \
 				-d $DOMAIN \
-				--register-unsafely-without-email \
+				--register-unsafely-without-email
 			else
 				certbot certonly --standalone --non-interactive --agree-tos \
 				-d $DOMAIN \
-				--email $EMAIL \
+				--email $EMAIL
+			fi
 		fi
 
 		cron_file="/var/spool/cron/crontabs/root"
