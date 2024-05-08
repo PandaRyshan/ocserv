@@ -204,10 +204,6 @@ if [[ ! -f "/etc/ocserv/ocpasswd" ]]; then
 
 fi
 
-# enable ipv4/ipv6 ip forward
-sysctl -w net.ipv4.ip_forward=1
-sysctl -w net.ipv6.conf.all.forwarding=1
-
 # Enable NAT forwarding
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
 # iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
