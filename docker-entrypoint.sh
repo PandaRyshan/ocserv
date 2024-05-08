@@ -29,7 +29,7 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 
 	device = vpns
 
-	ipv4-network = 192.168.100.0/24
+	ipv4-network = 172.20.0.0/24
 	ipv4-netmask = 255.255.255.0
 	ipv6-network = fda9:4efe:7e3b:03ea::/48
 	ipv6-subnet-prefix = 64
@@ -203,14 +203,14 @@ if [[ ! -f "/etc/ocserv/ocpasswd" ]]; then
 
 fi
 
-# Open ipv4 ip forward
+# enable ipv4/ipv6 ip forward
 sysctl -w net.ipv4.ip_forward=1
 sysctl -w net.ipv6.conf.all.forwarding=1
 
 # Enable NAT forwarding
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
 # iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
-iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j MASQUERADE
 ip6tables -t nat -A POSTROUTING -s fda9:4efe:7e3b:03ea::/48 -j MASQUERADE
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
