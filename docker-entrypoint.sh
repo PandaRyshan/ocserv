@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# Wait for other container
-/wait
+# Wait for hosts or files to be available before starting
+if [[ -n "$WAIT_HOSTS" ]] || [[ -n "$WAIT_PATHS" ]]; then
+	/wait
+fi
 
 # Create init config
-if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
+if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	cat > ocserv.conf <<- EOCONF
 	# authentication via linux user
 	# auth = pam
@@ -89,17 +91,17 @@ if [ ! -f "/etc/ocserv/ocserv.conf" ]; then
 fi
 
 # Create certs if no local or letsencrypt certs
-if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
+if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]]; then
 
 	IPV4=$(timeout 3 curl -s https://ipinfo.io/ip || echo "")
 	IPV6=$(timeout 3 curl -s https://6.ipinfo.io/ip || echo "")
-	if [ -z $DOMAIN ]; then
+	if [[ -z $DOMAIN ]]; then
 
 		# Create self signed certificate
 		CN="vpn.example.com"
 		ORG="Organization"
 		DAYS=3650
-		if [ -z "$IPV4" ] && [ -z "$IPV6" ]; then
+		if [[ -z "$IPV4" ]] && [[ -z "$IPV6" ]]; then
 			echo "Failed to get public IP address"
 			exit 1
 		fi
@@ -135,7 +137,7 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 	else
 
 		# Create letsencrypt certificate
-		if [ -f "/etc/ocserv/cloudflare.ini" ]; then
+		if [[ -f "/etc/ocserv/cloudflare.ini" ]]; then
 			if [[ -z $EMAIL ]]; then
 				certbot certonly --dns-cloudflare --non-interactive --agree-tos \
 				--dns-cloudflare-credentials /etc/ocserv/cloudflare.ini \
@@ -179,7 +181,7 @@ if [ ! -f "/etc/ocserv/server.cert" ] && [ ! -f "/etc/letsencrypt/live/$DOMAIN/f
 fi
 
 # Create init user for PAM authentication
-if [ ! -f "/etc/ocserv/ocpasswd" ]; then
+if [[ ! -f "/etc/ocserv/ocpasswd" ]]; then
 
 	if [[ -z $USERNAME ]] && [[ -z $PASSWORD ]]; then
 		# Create specific user

@@ -3,16 +3,16 @@ services:
     image: pandasrun/ocserv:latest
     container_name: ocserv
     environment:
-      - TZ=Asia/Hong_Kong
       - DOMAIN=${DOMAIN}
       - EMAIL=${EMAIL}            # OPTIONAL, only for cert expiration remind
       - USERNAME=${USERNAME}      # OPTIONAL, will be generated auto if not set
       - PASSWORD=${USERPASS}      # OPTIONAL, will be generated auto if not set
-      - WAIT_TIMEOUT=30           # OPTIONAL, default 30s, wait for file / host / container to be ready
+      # - WAIT_TIMEOUT=           # OPTIONAL, default 30s, wait for file / host / container to be ready
+      # - WAIT_HOSTS=             # OPTIONAL, comma separated list of hostnames to wait for
+      # - WAIT_PATHS=             # OPTIONAL, comma separated list of paths to wait for
     ports:
       - 80:80 # for certbot obtain cert via http, no need when you use dns
       - 443:443
-      - 443:443/udp
     # volumes:
     #   - ./config:/etc/ocserv
     #   - ./letsencrypt:/etc/letsencrypt

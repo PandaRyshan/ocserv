@@ -31,6 +31,7 @@ WORKDIR /etc/ocserv
 
 COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
 COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
