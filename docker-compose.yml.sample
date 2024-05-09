@@ -33,4 +33,4 @@ networks:
     enable_ipv6: true
     ipam:
       config:
-        - subnet: fda9:4efe:7e3b::/48
+        - subnet: 2001:0DB8::/112

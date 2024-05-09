@@ -71,7 +71,7 @@ Please make sure your docker service has been enabled ipv6 support, if not yet, 
 ```json
 {
   "ipv6": true,
-  "fixed-cidr-v6": "2001:db8:1::/64",
+  "fixed-cidr-v6": "2001:0DB8:1::/64",
   "experimental": true,
   "ip6tables": true
 }
@@ -82,6 +82,8 @@ then, restart your docker service:
 ```shell
 sudo systemctl restart docker.service
 ```
+
+Please note that the `fixed-cidr-v6` network segment and `subnet` in compose file should belong to same larger network segment, but side by side with each other.
 
 ---
 

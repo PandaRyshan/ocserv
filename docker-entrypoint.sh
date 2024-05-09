@@ -24,20 +24,17 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	max-clients = 100
 	max-same-clients = 0
 
-	# disable ssl3 tls1.0 tls1.1
 	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2"
 
 	device = vpns
 
 	ipv4-network = 172.20.0.0/24
 	ipv4-netmask = 255.255.255.0
-	ipv6-network = fda9:4efe:7e3b:03ea::/48
-	ipv6-subnet-prefix = 64
-	ping-leases = false
+	ipv6-network = 2001:db8:2::/64
+	ipv6-subnet-prefix = 112
 
 	route = 172.20.0.0/24
-	route = fda9:4efe:7e3b:03ea::/48
-	route = default
+	route = 2001:db8:2::/64
 	no-route = 10.0.0.0/8
 	no-route = 100.64.0.0/10
 	no-route = 169.254.0.0/16
@@ -68,27 +65,27 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	dpd = 90
 	mobile-dpd = 1800
 	switch-to-tcp-timeout = 25
-
 	try-mtu-discovery = true
 
-	# uncomment below if you are using haproxy
+	# Uncomment if you are using haproxy
 	# listen-proxy-proto = true
 
-	# Uncomment this to enable compression negotiation (LZS, LZ4).
-	compression = true
+	# Uncomment to enable compression negotiation (LZS, LZ4)
+	# And set minimum under a packet will not be compressed.
+	# Compression is designed to save bandwidth, but it can be
+	# bring a little latency. The default size is 256 bytes,
+	# to avoid latency for VoIP packets. Modify it if the clients
+	# typically use compression as well of VoIP with codecs that
+	# exceed the default value.
+	# compression = true
+	# no-compress-limit = 256
 
-	# Set the minimum size under which a packet will not be compressed.
-	# That is to allow low-latency for VoIP packets. The default size
-	# is 256 bytes. Modify it if the clients typically use compression
-	# as well of VoIP with codecs that exceed the default value.
-	no-compress-limit = 256
-
-	# if you want to support older version cisco clients, uncomment the following line
-	# dtls-legacy = true
-	# cisco-client-compat = true
-
-	match-tls-dtls-ciphers = true
+	# Change below to true if you want to support older version cisco clients
 	dtls-legacy = false
+	cisco-client-compat = false
+
+	ping-leases = false
+	match-tls-dtls-ciphers = true
 
 	use-occtl = true
 	log-level = 1
@@ -208,7 +205,10 @@ fi
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
 # iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
 iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j MASQUERADE
-ip6tables -t nat -A POSTROUTING -s fda9:4efe:7e3b:03ea::/48 -j MASQUERADE
+iptables -I FORWARD -s 172.20.0.0/24 -j ACCEPT
+iptables -I FORWARD -d 172.20.0.0/24 -j ACCEPT
+ip6tables -I FORWARD -s 2001:db8:2::/64 -j ACCEPT
+ip6tables -I FORWARD -d 2001:db8:2::/64 -j ACCEPT
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 # Enable TUN device
