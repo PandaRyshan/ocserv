@@ -24,10 +24,35 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	max-clients = 100
 	max-same-clients = 0
 
-	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2"
+	# TLS priorities settings, use '-' to ban a cipher
+	tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-RSA:-ARCFOUR-128:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2"
+
+	# This option requires the established DTLS channel to use the same cipher as
+	# the primary TLS channel. Note, that this option implies that the
+	# dtls-legacy option is false, and this option cannot be enforced in the
+	# leagcy/compat protocol
+	match-tls-dtls-ciphers = true
+
+	# Change below to true and change match-tls-dtls-cipers to false if you want to
+	# support old version cisco clients
+	dtls-legacy = false
+	cisco-client-compat = false
 
 	device = vpns
 
+	# Prior to leasing any IP from the pool ping it to verify that
+	# it is not in use by another (unrelated to this server) host.
+	# Only set to true, if there can be occupied addresses in the
+	# IP range for leases.
+	ping-leases = false
+
+	# The pool of addresses that leases will be given from. If the leases
+	# are given via Radius, or via the explicit-ip? per-user config option then
+	# these network values should contain a network with at least a single
+	# address that will remain under the full control of ocserv (that is
+	# to be able to assign the local part of the tun device address).
+	# Note that, you could use addresses from a subnet of your LAN network if you
+	# enable [proxy arp in the LAN interface](http://ocserv.openconnect-vpn.net/recipes-ocserv-pseudo-bridge.html);
 	ipv4-network = 172.20.0.0/24
 	ipv4-netmask = 255.255.255.0
 	ipv6-network = 2001:db8:2::/64
@@ -58,6 +83,8 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	# custom config file must as same as username or groupname
 	config-per-user = /etc/ocserv/config-per-user/
 	config-per-group = /etc/ocserv/config-per-group/
+
+	# IP stays the same for the same user when possible
 	predictable-ips = true
 
 	# dead peer detection and keepalive in seconds
@@ -79,13 +106,6 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	# exceed the default value.
 	# compression = true
 	# no-compress-limit = 256
-
-	# Change below to true if you want to support older version cisco clients
-	dtls-legacy = false
-	cisco-client-compat = false
-
-	ping-leases = false
-	match-tls-dtls-ciphers = true
 
 	use-occtl = true
 	log-level = 1
@@ -125,7 +145,7 @@ if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAI
 		cat > server.tmpl <<-EOSRV
 		cn = "$CN"
 		organization = "$ORG"
-    serial = 2
+		serial = 2
 		expiration_days = $DAYS
 		signing_key
 		encryption_key
