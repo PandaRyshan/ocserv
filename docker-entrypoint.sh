@@ -205,6 +205,7 @@ fi
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
 # iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
 iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j MASQUERADE
+ip6tables -t nat -A POSTROUTING -s 2001:db8:2::/64 -j MASQUERADE
 iptables -I FORWARD -s 172.20.0.0/24 -j ACCEPT
 iptables -I FORWARD -d 172.20.0.0/24 -j ACCEPT
 ip6tables -I FORWARD -s 2001:db8:2::/64 -j ACCEPT
