@@ -70,8 +70,6 @@ Please make sure your docker service has been enabled ipv6 support, if not yet, 
 
 ```json
 {
-  "ipv6": true,
-  "fixed-cidr-v6": "2001:0DB8:1::/64",
   "experimental": true,
   "ip6tables": true
 }
@@ -83,7 +81,27 @@ then, restart your docker service:
 sudo systemctl restart docker.service
 ```
 
-Please note that the `fixed-cidr-v6` network segment and `subnet` in compose file should belong to same larger network segment, but side by side with each other.
+The ocserv server should be works now.
+
+If you want, you can add settings to assign a default ipv6 network segment:
+
+```json
+{
+  "experimental": true,
+  "ip6tables": true,
+  "ipv6": true,
+  "fixed-cidr-v6": "2001:db8:1::/64"
+}
+```
+
+### resolve IPv6 domain error
+
+Maybe you will see the error when you connect to the server with your Cisco Security Client, especailly when your server is IPv6 only. Maybe thers's a problem in your DNS settings or IPv4/IPv6 weights settings etc. The easy way to solve problem is edit your HOST file. For example, on Windows you could find `C:\Windows\System32\drivers\etc\hosts` and open it, and add content into it:
+
+```text
+2406:da12:3456:7890:1abc:1:2 vpn.example.com
+18.111.222.333 vpn.example.com
+```
 
 ---
 
