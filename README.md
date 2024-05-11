@@ -117,7 +117,7 @@ If you see an error when you are applying for certificates in an IPv6 only netwo
 * [Recipes for Openconnect VPN - Official](https://docs.openconnect-vpn.net/recipes/)
 * [Ocserv Advanced](https://www.linuxbabe.com/linux-server/ocserv-openconnect-vpn-advanced)
 * [Block Visitors by Country Using Firewall](https://www.ip2location.com/free/visitor-blocker)
-* [ocserv changelog](https://ocserv.gitlab.io/www/changelog.html)
+* [ocserv changelog](https://ocserv.openconnect-vpn.net/changelog.html)
 * [Docker Enable IPv6 support](https://docs.docker.com/config/daemon/ipv6/)
 * [Docker compose wait](https://github.com/ufoscout/docker-compose-wait)
 
