@@ -4,9 +4,11 @@
 
 ## Description
 
-This repo combines [ocserv](https://ocserv.gitlab.io/www/recipes.html) VPN server and [certbot](https://eff-certbot.readthedocs.io/en/stable/using.html#) in one image, allowing users to use secure VPN service and request or renew cert automatically.  The certbot-dns-cloudflare plugin is installed by default.
+This repo combines [ocserv](https://ocserv.openconnect-vpn.net/) VPN server and [certbot](https://certbot.eff.org/) in one image, allowing users to use secure VPN service and request or renew cert automatically. The certbot-dns-cloudflare plugin is installed by default.
 
-This image provided a default config in `/etc/ocserv/ocserv.conf`. If you don't mount a conf file, it will generate a new one. And [ENV file](https://github.com/PandaRyshan/ocserv/blob/main/.env) is used to request a Letsencrypt certificate and create a default username. If no ENV is provided, the ocserv service will be started with a locally generated certificate.
+This image provided a default config in `/etc/ocserv/ocserv.conf`. If you don't mount a conf file, it will generate a new one. And [ENV file](https://github.com/PandaRyshan/ocserv/blob/main/.env) is used to request a Let's Encrypt certificate and create a default username. If no ENV is provided, the ocserv service will generate a self-signed certificate.
+
+The default ocserv config I provided is designed to offer a basic, out-of-box VPN environment. It doesn't include additional config for internal resources access control, user authentication, user management, auditing, etc. And camouflage feature default is disabled in the config, you can enable it and set a secret string for it if you need. For more features and settings, please refer to the [offical documention](https://ocserv.openconnect-vpn.net/ocserv.8.html).
 
 The latest version is 1.3.0, and dockerhub page is [here](https://ocserv.gitlab.io/www/download.html).
 
@@ -103,12 +105,16 @@ Maybe you will see the error when you connect to the server with your Cisco Secu
 18.111.222.333 vpn.example.com
 ```
 
+### Certificate application error
+
+If you see an error when you are applying for certificates in an IPv6 only network, and you have provided an email address to subscribe the mail notification, there will be an network connection error after the certificates generated. This is because the [Let's Encrypt email subscription service](https://supporters.eff.org/subscribe/certbot) dose not support IPv6 access.
+
 ---
 
 ## References
 
-* [Recipes for Openconnect VPN - Official](https://ocserv.gitlab.io/www/recipes.html)
-* [Openconnect VPN Manual - Official](https://ocserv.gitlab.io/www/manual.html)
+* [Openconnect VPN Manual - Official](https://ocserv.openconnect-vpn.net/ocserv.8.html)
+* [Recipes for Openconnect VPN - Official](https://docs.openconnect-vpn.net/recipes/)
 * [Ocserv Advanced](https://www.linuxbabe.com/linux-server/ocserv-openconnect-vpn-advanced)
 * [Block Visitors by Country Using Firewall](https://www.ip2location.com/free/visitor-blocker)
 * [ocserv changelog](https://ocserv.gitlab.io/www/changelog.html)

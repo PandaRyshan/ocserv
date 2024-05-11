@@ -38,6 +38,7 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	dtls-legacy = false
 	cisco-client-compat = false
 
+	# tun device name
 	device = vpns
 
 	# Prior to leasing any IP from the pool ping it to verify that
@@ -97,23 +98,39 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	# Uncomment if you are using haproxy
 	# listen-proxy-proto = true
 
-	# Uncomment to enable compression negotiation (LZS, LZ4)
-	# And set minimum under a packet will not be compressed.
-	# Compression is designed to save bandwidth, but it can be
-	# bring a little latency. The default size is 256 bytes,
-	# to avoid latency for VoIP packets. Modify it if the clients
-	# typically use compression as well of VoIP with codecs that
-	# exceed the default value.
+	# Uncomment to enable compression negotiation (LZS, LZ4) and set minimum
+	# under a packet will not be compressed.
+	# Compression is designed to save bandwidth, but it can be bring a little latency.
+	# The default size is 256 bytes, to avoid latency for VoIP packets.
+	# Modify it if the clients typically use compression as well of VoIP with codecs
+	# that exceed the default value.
 	# compression = true
 	# no-compress-limit = 256
 
+	# Enable camouflage feature that make vpn service look like a web server.
+	# Connection to the vpn can be established only if the client provided a specific secret string,
+	# other wise the server will return HTTP error for all requests.
+	camouflage = false
+
+	# The URL prefix that should be set on the client (after '?' sign) to pass through the camouflage check,
+	# e.g. in case of 'mysecretkey', the server URL on the client should be like "https://example.com/?mysecretkey".
+	camouflage_secret = "thegreatwall"
+
+	# Defines the realm (browser prompt) for HTTP authentication.
+	# If no realm is set, the server will return 404 Not found error instead of 401 Unauthorized.
+	# Better change it from the default value to avoid fingerprinting.
+	camouflage_realm = "Restricted Content"
+
+	# enable occtl tool
 	use-occtl = true
+
+	# default 0/2 info leavel, 1 basic, 3 debug, 4 http, 8 sensitive, 9 tls
 	log-level = 1
 	EOCONF
 
 fi
 
-# Create certs if no local or letsencrypt certs
+# Create certs if no certs are provided
 if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]]; then
 
 	IPV4=$(timeout 3 curl -s https://ipinfo.io/ip || echo "")
@@ -202,7 +219,7 @@ if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAI
 
 fi
 
-# Create init user for PAM authentication
+# Create random initial user if no PAM user file is provided
 if [[ ! -f "/etc/ocserv/ocpasswd" ]]; then
 
 	if [[ -z $USERNAME ]] && [[ -z $PASSWORD ]]; then
@@ -223,7 +240,7 @@ fi
 
 # Enable NAT forwarding
 # if you want to specific translate ip, uncomment the following line, -j MASQUERADE is dynamic way
-# iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to-source $(hostname -I)
+# iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j SNAT --to-source $(hostname -I)
 iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j MASQUERADE
 ip6tables -t nat -A POSTROUTING -s 2001:db8:2::/64 -j MASQUERADE
 iptables -I FORWARD -s 172.20.0.0/24 -j ACCEPT
