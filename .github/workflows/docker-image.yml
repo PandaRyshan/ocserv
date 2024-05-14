@@ -8,6 +8,8 @@ on:
       - 'Dockerfile'
       - 'docker-entrypoint.sh'
 
+  workflow_dispatch:
+
 jobs:
   docker:
     runs-on: ubuntu-latest
