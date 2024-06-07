@@ -59,8 +59,7 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 	ipv6-network = 2001:db8:2::/64
 	ipv6-subnet-prefix = 112
 
-	route = 172.20.0.0/24
-	route = 2001:db8:2::/64
+	route = default
 	no-route = 10.0.0.0/8
 	no-route = 100.64.0.0/10
 	no-route = 169.254.0.0/16
@@ -243,11 +242,8 @@ fi
 # iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j SNAT --to-source $(hostname -I)
 iptables -t nat -A POSTROUTING -s 172.20.0.0/24 -j MASQUERADE
 ip6tables -t nat -A POSTROUTING -s 2001:db8:2::/64 -j MASQUERADE
-iptables -I FORWARD -s 172.20.0.0/24 -j ACCEPT
-iptables -I FORWARD -d 172.20.0.0/24 -j ACCEPT
-ip6tables -I FORWARD -s 2001:db8:2::/64 -j ACCEPT
-ip6tables -I FORWARD -d 2001:db8:2::/64 -j ACCEPT
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+ip6tables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 # Enable TUN device
 mkdir -p /dev/net
