@@ -5,9 +5,11 @@ if [[ -n "$WAIT_HOSTS" ]] || [[ -n "$WAIT_PATHS" ]]; then
 	/wait
 fi
 
+OCSERV_CONF="/etc/ocserv/ocserv.conf"
+
 # Create init config
-if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
-	cat > ocserv.conf <<- EOCONF
+if [[ ! -f $OCSERV_CONF ]]; then
+	cat > $OCSERV_CONF <<- EOCONF
 	# authentication via linux user
 	# auth = pam
 
@@ -130,7 +132,11 @@ if [[ ! -f "/etc/ocserv/ocserv.conf" ]]; then
 fi
 
 # Create certs if no certs are provided
-if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]]; then
+if [[ ! -f "/etc/ocserv/server-cert.pem" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAIN/priv-fullchain-bundle.pem" ]]; then
+
+	# Remove existing server-cert and server-key lines if they exist
+	sed -i '/^server-cert =/d' $OCSERV_CONF
+	sed -i '/^server-key =/d' $OCSERV_CONF
 
 	IPV4=$(timeout 3 curl -s https://ipinfo.io/ip || echo "")
 	IPV6=$(timeout 3 curl -s https://6.ipinfo.io/ip || echo "")
@@ -170,8 +176,6 @@ if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAI
 		ip_address = "${IPV4:-$IPV6}"
 		EOSRV
 		certtool --generate-certificate --load-privkey server-key.pem --load-ca-certificate ca.pem --load-ca-privkey ca-key.pem --template server.tmpl --outfile server-cert.pem
-		echo "server-cert = /etc/ocserv/server-cert.pem" >> ocserv.conf
-		echo "server-key = /etc/ocserv/server-key.pem" >> ocserv.conf
 
 	else
 
@@ -205,17 +209,26 @@ if [[ ! -f "/etc/ocserv/server.cert" ]] && [[ ! -f "/etc/letsencrypt/live/$DOMAI
 		if ! grep -Fxq "$cron_config" $cron_file; then
 			echo "$cron_config" >> $cron_file
 		fi
-		ocserv_config_file="/etc/ocserv/ocserv.conf"
-		cert_config="server-cert = /etc/letsencrypt/live/$DOMAIN/fullchain.pem"
-		key_config="server-key = /etc/letsencrypt/live/$DOMAIN/privkey.pem"
-		if ! grep -Fxq "$cert_config" $ocserv_config_file; then
-			echo "$cert_config" >> $ocserv_config_file
-			echo "$key_config" >> $ocserv_config_file
-		fi
 		service cron restart
-
 	fi
+fi
 
+if ! grep -Fxq "server-cert =" $OCSERV_CONF && ! grep -Fxq "server-key =" $OCSERV_CONF; then
+	# Remove existing server-cert and server-key lines if they exist
+	sed -i '/^server-cert =/d' $OCSERV_CONF
+	sed -i '/^server-key =/d' $OCSERV_CONF
+
+	if [[ -z $DOMAIN ]]; then
+		cert_config="server-cert = /etc/ocserv/server-cert.pem"
+		key_config="server-key = /etc/ocserv/server-key.pem"
+		echo "$cert_config" >> $OCSERV_CONF
+		echo "$key_config" >> $OCSERV_CONF
+	else
+		cert_config="server-cert = /etc/letsencrypt/live/$DOMAIN/priv-fullchain-bundle.pem"
+		key_config="server-key = /etc/letsencrypt/live/$DOMAIN/priv-fullchain-bundle.pem"
+		echo "$cert_config" >> $OCSERV_CONF
+		echo "$key_config" >> $OCSERV_CONF
+	fi
 fi
 
 # Create random initial user if no PAM user file is provided
