@@ -3,11 +3,12 @@ LABEL maintainer="Hu Xiaohong <xiaohong@pandas.run>"
 
 ENV URL="https://www.infradead.org/ocserv/download/"
 ENV BUILD_DEPS="\
-  make gcc coreutils build-base \
+  gcc coreutils build-base \
   xz gawk pkgconfig nettle-dev gnutls-dev \
   libev-dev readline-dev lz4-dev libseccomp-dev \
   oath-toolkit-dev libnl3-dev talloc-dev http-parser-dev \
-  radcli-dev linux-pam-dev krb5-dev protobuf-c-dev"
+  radcli-dev linux-pam-dev krb5-dev protobuf-c-dev \
+  meson ninja"
 
 RUN apk add --no-cache bash curl ${BUILD_DEPS}
 
@@ -19,8 +20,9 @@ RUN set -x \
     sort -V | tail -n1 | \
     xargs -I {} curl -sLo ocserv.tar.xz "$URL{}" \
   && tar -xf ocserv.tar.xz && cd ocserv-* \
-  && ./configure \
-  && make && make install && make clean \
+  && meson setup build \
+  && meson compile -C build \
+  && meson install -C build \
   && cd .. && rm -rf ocserv-* ocserv.tar.xz
 
 # Final runtime stage
